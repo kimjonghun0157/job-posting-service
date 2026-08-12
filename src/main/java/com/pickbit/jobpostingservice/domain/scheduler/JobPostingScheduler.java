@@ -42,7 +42,7 @@ public class JobPostingScheduler {
 
     private final JobRepository jobRepository;
 
-    @Scheduled(fixedRate = 100_000)
+    @Scheduled(fixedRateString = "${scheduler.job-posting.fixed-rate:300000}")
     @Transactional
     public void autoRegister() {
         ThreadLocalRandom random = ThreadLocalRandom.current();

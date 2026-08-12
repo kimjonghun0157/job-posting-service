@@ -3,10 +3,11 @@ package com.pickbit.jobpostingservice.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class JobPosting extends BaseEntity {
@@ -21,5 +22,6 @@ public class JobPosting extends BaseEntity {
     private String description;
 
     @Column(nullable = false, comment = "조회수")
+    @Builder.Default
     private int viewCount=0;
 }
