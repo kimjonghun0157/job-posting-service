@@ -18,7 +18,7 @@ public class JobPosting extends BaseEntity {
     @Column(nullable = false, length = 200, comment = "기업명")
     private String company;
 
-    @Column(nullable = false, columnDefinition = "LONGTEXT", comment = "공고 상세 내용")
+    @Column(nullable = false, columnDefinition = "TEXT", comment = "공고 상세 내용")
     private String description;
 
     @Column(nullable = false, comment = "조회수")

@@ -1,16 +1,21 @@
 services:
-  mysql:
-    image: mysql:8.4.5
-    container_name: pickbit-mysql
+  postgres:
+    image: postgres:17
+    container_name: pickbit-postgres
     ports:
-      - "3307:3306"
+      - "5432:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: pickbit_root_pass
-      MYSQL_DATABASE: pickbit_job_db
-      MYSQL_USER: pickbit_user
-      MYSQL_PASSWORD: pickbit_pass_2024
+      POSTGRES_DB: pickbit_job_db
+      POSTGRES_USER: pickbit_user
+      POSTGRES_PASSWORD: pickbit_pass_2024
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: pickbit-redis
+    ports:
+      - "6379:6379"
 
 volumes:
-  mysql-data:
+  postgres-data:
