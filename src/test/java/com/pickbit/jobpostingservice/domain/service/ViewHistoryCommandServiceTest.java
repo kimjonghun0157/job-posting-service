@@ -21,6 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 조회 이력 등록 서비스 테스트 — Redis→DB 반영, 100건 상한, 1000스레드 동시성 검증
+ */
 @TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
 class ViewHistoryCommandServiceTest extends TestSupport {
 

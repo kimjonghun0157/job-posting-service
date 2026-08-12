@@ -9,6 +9,9 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * SliceResponse 단위 테스트 — hasNext 판단, 커서 ID 추출, 빈 결과 처리 검증
+ */
 class SliceResponseTest {
 
     record Item(Long id, String name) {}

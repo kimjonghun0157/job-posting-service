@@ -19,6 +19,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 커서 기반 공고 목록 조회 서비스 테스트 — 페이지네이션, 정렬, 빈 결과 검증
+ */
 @TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
 class JobQueryServiceTest extends TestSupport {
 

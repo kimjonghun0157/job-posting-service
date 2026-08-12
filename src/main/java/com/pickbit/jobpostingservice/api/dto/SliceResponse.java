@@ -3,6 +3,9 @@ package com.pickbit.jobpostingservice.api.dto;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * 커서 기반 슬라이스 응답 — content 목록, 다음 페이지 존재 여부, 마지막 커서 ID 포함
+ */
 public record SliceResponse<T>(
         List<T> content,
         boolean hasNext,

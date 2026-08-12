@@ -22,4 +22,10 @@ public interface JobRepository extends JpaRepository<JobPosting, Long> {
      * ID 목록으로 공고 일괄 조회
      */
     List<JobPosting> findByIdIn(List<Long> ids);
+
+    /**
+     * 최신 등록순 공고 N건 조회 (메인 페이지 fallback용)
+     */
+    @Query("SELECT j FROM JobPosting j ORDER BY j.createdAt DESC LIMIT :limit")
+    List<JobPosting> findTopByOrderByCreatedAtDesc(@Param("limit") int limit);
 }

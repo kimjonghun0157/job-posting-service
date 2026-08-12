@@ -14,6 +14,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 공고 대량 생성 서비스 테스트 — 50건 batch insert 및 필드 무결성 검증
+ */
 @TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
 class JobPostingAutoCreateServiceTest extends TestSupport {
 
