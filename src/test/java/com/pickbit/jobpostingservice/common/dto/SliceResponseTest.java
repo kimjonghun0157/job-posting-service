@@ -1,4 +1,4 @@
-package com.pickbit.jobpostingservice.api.dto;
+package com.pickbit.jobpostingservice.common.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

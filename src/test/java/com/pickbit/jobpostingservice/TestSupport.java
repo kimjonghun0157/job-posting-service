@@ -7,6 +7,9 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+/**
+ * 통합 테스트 기반 클래스 — Testcontainers로 PostgreSQL 17 + Redis 7 자동 구성
+ */
 @SpringBootTest
 @Testcontainers
 public abstract class TestSupport {

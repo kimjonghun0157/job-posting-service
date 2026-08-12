@@ -30,3 +30,11 @@ spring:
     init:
       mode: always
       data-locations: classpath:sql/view-history-constraint.sql
+
+scheduler:
+  job-posting:
+    fixed-rate: 300000
+  view-history:
+    fixed-rate: 1000
+  main-page:
+    fixed-rate: 600000

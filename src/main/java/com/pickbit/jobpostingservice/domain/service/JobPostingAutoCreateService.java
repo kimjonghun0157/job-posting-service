@@ -1,7 +1,7 @@
-package com.pickbit.jobpostingservice.domain.serivce;
+package com.pickbit.jobpostingservice.domain.service;
 
 import com.pickbit.jobpostingservice.domain.entity.JobPosting;
-import com.pickbit.jobpostingservice.domain.entity.JobRepository;
+import com.pickbit.jobpostingservice.domain.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

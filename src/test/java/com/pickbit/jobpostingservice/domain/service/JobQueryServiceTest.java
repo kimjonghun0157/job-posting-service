@@ -1,12 +1,11 @@
 package com.pickbit.jobpostingservice.domain.service;
 
 import com.pickbit.jobpostingservice.TestSupport;
-import com.pickbit.jobpostingservice.api.dto.CursorRequest;
-import com.pickbit.jobpostingservice.api.dto.JobPostingListResponse;
-import com.pickbit.jobpostingservice.api.dto.SliceResponse;
+import com.pickbit.jobpostingservice.common.dto.CursorRequest;
+import com.pickbit.jobpostingservice.common.dto.SliceResponse;
+import com.pickbit.jobpostingservice.domain.dto.JobPostingReadModel;
 import com.pickbit.jobpostingservice.domain.entity.JobPosting;
-import com.pickbit.jobpostingservice.domain.entity.JobRepository;
-import com.pickbit.jobpostingservice.domain.serivce.JobQueryService;
+import com.pickbit.jobpostingservice.domain.repository.JobRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,11 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 커서 기반 공고 목록 조회 서비스 테스트 — 페이지네이션, 정렬, 빈 결과 검증
  */
-@TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
+@TestPropertySource(properties = {
+        "scheduler.job-posting.fixed-rate=999999999",
+        "scheduler.view-history.fixed-rate=999999999",
+        "scheduler.main-page.fixed-rate=999999999"
+})
 class JobQueryServiceTest extends TestSupport {
 
     @Autowired
@@ -59,7 +63,7 @@ class JobQueryServiceTest extends TestSupport {
         CursorRequest request = new CursorRequest(null, 10);
 
         // when
-        SliceResponse<JobPostingListResponse> response = jobQueryService.getJobPostings(request);
+        SliceResponse<JobPostingReadModel> response = jobQueryService.getJobPostings(request);
 
         // then
         assertThat(response.content()).hasSize(10);
@@ -76,11 +80,11 @@ class JobQueryServiceTest extends TestSupport {
     @DisplayName("커서 ID로 다음 페이지를 조회하면 해당 ID보다 이전 공고를 반환한다")
     void getNextPageByCursorReturnsOlderPostings() {
         // given
-        SliceResponse<JobPostingListResponse> firstPage = jobQueryService.getJobPostings(new CursorRequest(null, 10));
+        SliceResponse<JobPostingReadModel> firstPage = jobQueryService.getJobPostings(new CursorRequest(null, 10));
         CursorRequest request = new CursorRequest(firstPage.lastId(), 10);
 
         // when
-        SliceResponse<JobPostingListResponse> secondPage = jobQueryService.getJobPostings(request);
+        SliceResponse<JobPostingReadModel> secondPage = jobQueryService.getJobPostings(request);
 
         // then
         assertThat(secondPage.content()).hasSize(10);
@@ -95,12 +99,12 @@ class JobQueryServiceTest extends TestSupport {
     @DisplayName("마지막 페이지를 조회하면 다음 페이지가 없음을 반환한다")
     void getLastPageReturnsHasNextFalse() {
         // given
-        SliceResponse<JobPostingListResponse> first = jobQueryService.getJobPostings(new CursorRequest(null, 10));
-        SliceResponse<JobPostingListResponse> second = jobQueryService.getJobPostings(new CursorRequest(first.lastId(), 10));
+        SliceResponse<JobPostingReadModel> first = jobQueryService.getJobPostings(new CursorRequest(null, 10));
+        SliceResponse<JobPostingReadModel> second = jobQueryService.getJobPostings(new CursorRequest(first.lastId(), 10));
         CursorRequest request = new CursorRequest(second.lastId(), 10);
 
         // when
-        SliceResponse<JobPostingListResponse> lastPage = jobQueryService.getJobPostings(request);
+        SliceResponse<JobPostingReadModel> lastPage = jobQueryService.getJobPostings(request);
 
         // then
         assertThat(lastPage.content()).hasSize(10);
@@ -118,11 +122,43 @@ class JobQueryServiceTest extends TestSupport {
         CursorRequest request = new CursorRequest(null, 10);
 
         // when
-        SliceResponse<JobPostingListResponse> response = jobQueryService.getJobPostings(request);
+        SliceResponse<JobPostingReadModel> response = jobQueryService.getJobPostings(request);
 
         // then
         assertThat(response.content()).isEmpty();
         assertThat(response.hasNext()).isFalse();
         assertThat(response.lastId()).isNull();
+    }
+
+    /**
+     * 지원하지 않는 정렬 필드 요청 시 예외 발생
+     */
+    @Test
+    @DisplayName("지원하지 않는 정렬 필드를 요청하면 예외가 발생한다")
+    void throwsExceptionForUnsupportedSortField() {
+        // given
+        CursorRequest request = new CursorRequest(null, 10, "unknown", "DESC");
+
+        // when & then
+        assertThatThrownBy(() -> jobQueryService.getJobPostings(request))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /**
+     * createdAt 정렬 기준으로 조회
+     */
+    @Test
+    @DisplayName("생성일 기준 내림차순 정렬로 조회할 수 있다")
+    void getPostingsSortedByCreatedAt() {
+        // given
+        CursorRequest request = new CursorRequest(null, 10, "createdAt", "DESC");
+
+        // when
+        SliceResponse<JobPostingReadModel> response = jobQueryService.getJobPostings(request);
+
+        // then
+        assertThat(response.content()).hasSize(10);
+        assertThat(response.hasNext()).isTrue();
     }
 }

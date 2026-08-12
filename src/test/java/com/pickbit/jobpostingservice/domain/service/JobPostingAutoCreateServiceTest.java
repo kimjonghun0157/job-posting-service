@@ -2,8 +2,8 @@ package com.pickbit.jobpostingservice.domain.service;
 
 import com.pickbit.jobpostingservice.TestSupport;
 import com.pickbit.jobpostingservice.domain.entity.JobPosting;
-import com.pickbit.jobpostingservice.domain.entity.JobRepository;
-import com.pickbit.jobpostingservice.domain.serivce.JobPostingAutoCreateService;
+import com.pickbit.jobpostingservice.domain.repository.JobRepository;
+import com.pickbit.jobpostingservice.domain.service.JobPostingAutoCreateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 공고 대량 생성 서비스 테스트 — 50건 batch insert 및 필드 무결성 검증
  */
-@TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
+@TestPropertySource(properties = {
+        "scheduler.job-posting.fixed-rate=999999999",
+        "scheduler.view-history.fixed-rate=999999999",
+        "scheduler.main-page.fixed-rate=999999999"
+})
 class JobPostingAutoCreateServiceTest extends TestSupport {
 
     @Autowired

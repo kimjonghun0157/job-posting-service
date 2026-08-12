@@ -1,12 +1,13 @@
 package com.pickbit.jobpostingservice.api.controller;
 
-import com.pickbit.jobpostingservice.api.dto.CursorRequest;
 import com.pickbit.jobpostingservice.api.dto.JobPostingListResponse;
 import com.pickbit.jobpostingservice.api.dto.MainJobPostingResponse;
-import com.pickbit.jobpostingservice.api.dto.SliceResponse;
-import com.pickbit.jobpostingservice.domain.serivce.JobQueryService;
-import com.pickbit.jobpostingservice.domain.serivce.MainPageService;
-import com.pickbit.jobpostingservice.domain.serivce.ViewCountRedisService;
+import com.pickbit.jobpostingservice.common.dto.CursorRequest;
+import com.pickbit.jobpostingservice.common.dto.SliceResponse;
+import com.pickbit.jobpostingservice.domain.dto.JobPostingReadModel;
+import com.pickbit.jobpostingservice.domain.service.JobQueryService;
+import com.pickbit.jobpostingservice.domain.service.MainPageService;
+import com.pickbit.jobpostingservice.domain.service.ViewRegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ import java.util.List;
 public class JobPostingController {
 
     private final JobQueryService jobQueryService;
-    private final ViewCountRedisService viewCountRedisService;
+    private final ViewRegistrationService viewRegistrationService;
     private final MainPageService mainPageService;
 
     /**
@@ -29,7 +30,11 @@ public class JobPostingController {
      */
     @GetMapping("/api/job-postings")
     public SliceResponse<JobPostingListResponse> getJobPostings(@ModelAttribute CursorRequest request) {
-        return jobQueryService.getJobPostings(request);
+        SliceResponse<JobPostingReadModel> slice = jobQueryService.getJobPostings(request);
+        List<JobPostingListResponse> mapped = slice.content().stream()
+                .map(r -> new JobPostingListResponse(r.id(), r.title(), r.company(), r.viewCount(), r.createdAt()))
+                .toList();
+        return new SliceResponse<>(mapped, slice.hasNext(), slice.lastId());
     }
 
     /**
@@ -37,15 +42,17 @@ public class JobPostingController {
      */
     @GetMapping("/api/job-postings/main")
     public List<MainJobPostingResponse> getMainPagePostings() {
-        return mainPageService.getMainPagePostings();
+        return mainPageService.getMainPagePostings().stream()
+                .map(r -> new MainJobPostingResponse(r.id(), r.title(), r.viewCount()))
+                .toList();
     }
 
     /**
-     * 공고 조회 이력 등록 (Redis INCR → 큐 적재 → 비동기 DB 반영)
+     * 공고 조회 이력 등록 (큐 적재 → 비동기 DB 반영)
      */
     @PostMapping("/api/job-postings/{id}/view")
     public ResponseEntity<Void> registerView(@PathVariable Long id, @RequestParam Long userId) {
-        boolean registered = viewCountRedisService.registerView(id, userId);
+        boolean registered = viewRegistrationService.registerView(id, userId);
         return registered ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 }

@@ -2,10 +2,9 @@ package com.pickbit.jobpostingservice.domain.service;
 
 import com.pickbit.jobpostingservice.TestSupport;
 import com.pickbit.jobpostingservice.domain.entity.JobPosting;
-import com.pickbit.jobpostingservice.domain.entity.JobRepository;
-import com.pickbit.jobpostingservice.domain.entity.ViewHistoryRepository;
-import com.pickbit.jobpostingservice.domain.serivce.ViewCountRedisService;
-import com.pickbit.jobpostingservice.domain.serivce.ViewHistoryCommandService;
+import com.pickbit.jobpostingservice.domain.port.ViewMessageQueue;
+import com.pickbit.jobpostingservice.domain.repository.JobRepository;
+import com.pickbit.jobpostingservice.domain.repository.ViewHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +23,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 조회 이력 등록 서비스 테스트 — Redis→DB 반영, 100건 상한, 1000스레드 동시성 검증
  */
-@TestPropertySource(properties = "scheduler.job-posting.fixed-rate=999999999")
+@TestPropertySource(properties = {
+        "scheduler.job-posting.fixed-rate=999999999",
+        "scheduler.view-history.fixed-rate=999999999",
+        "scheduler.main-page.fixed-rate=999999999"
+})
 class ViewHistoryCommandServiceTest extends TestSupport {
 
     @Autowired
-    private ViewCountRedisService viewCountRedisService;
+    private ViewRegistrationService viewRegistrationService;
 
     @Autowired
     private ViewHistoryCommandService viewHistoryCommandService;
@@ -38,6 +41,9 @@ class ViewHistoryCommandServiceTest extends TestSupport {
 
     @Autowired
     private ViewHistoryRepository viewHistoryRepository;
+
+    @Autowired
+    private ViewMessageQueue viewMessageQueue;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -66,7 +72,7 @@ class ViewHistoryCommandServiceTest extends TestSupport {
         Long postingId = savedPosting.getId();
 
         // when
-        boolean result = viewCountRedisService.registerView(postingId, 1L);
+        boolean result = viewRegistrationService.registerView(postingId, 1L);
         viewHistoryCommandService.flushViewQueue();
 
         // then
@@ -85,11 +91,11 @@ class ViewHistoryCommandServiceTest extends TestSupport {
         // given
         Long postingId = savedPosting.getId();
         for (int i = 0; i < 100; i++) {
-            viewCountRedisService.registerView(postingId, (long) i);
+            viewRegistrationService.registerView(postingId, (long) i);
         }
 
         // when
-        boolean result = viewCountRedisService.registerView(postingId, 999L);
+        boolean result = viewRegistrationService.registerView(postingId, 999L);
         flushAll();
 
         // then
@@ -117,7 +123,7 @@ class ViewHistoryCommandServiceTest extends TestSupport {
             long userId = i;
             executor.submit(() -> {
                 try {
-                    if (viewCountRedisService.registerView(postingId, userId)) {
+                    if (viewRegistrationService.registerView(postingId, userId)) {
                         successCount.incrementAndGet();
                     }
                 } finally {
@@ -140,7 +146,7 @@ class ViewHistoryCommandServiceTest extends TestSupport {
         Long queueSize;
         do {
             viewHistoryCommandService.flushViewQueue();
-            queueSize = viewCountRedisService.getQueueSize();
+            queueSize = viewMessageQueue.size();
         } while (queueSize != null && queueSize > 0);
     }
 }

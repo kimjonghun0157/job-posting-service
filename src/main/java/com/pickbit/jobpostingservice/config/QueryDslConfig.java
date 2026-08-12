@@ -6,6 +6,9 @@ import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * QueryDSL JPAQueryFactory 빈 등록
+ */
 @Configuration
 public class QueryDslConfig {
 

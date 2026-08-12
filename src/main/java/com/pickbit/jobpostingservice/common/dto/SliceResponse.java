@@ -1,4 +1,4 @@
-package com.pickbit.jobpostingservice.api.dto;
+package com.pickbit.jobpostingservice.common.dto;
 
 import java.util.List;
 import java.util.function.Function;

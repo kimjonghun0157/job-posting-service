@@ -1,9 +1,15 @@
-package com.pickbit.jobpostingservice.domain.entity;
+package com.pickbit.jobpostingservice.domain.repository;
+
+import com.pickbit.jobpostingservice.domain.entity.JobPosting;
+import com.pickbit.jobpostingservice.domain.entity.ViewHistory;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * 조회 이력 JPA 리포지토리 — 공고별 이력 건수 및 최대 순번 조회
+ */
 public interface ViewHistoryRepository extends JpaRepository<ViewHistory, Long> {
 
     /**

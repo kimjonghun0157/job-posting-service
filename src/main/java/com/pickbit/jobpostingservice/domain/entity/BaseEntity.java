@@ -11,6 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 공통 엔티티 — ID(SEQUENCE, allocationSize=100), 등록 일시, 수정 일시 자동 관리
+ */
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
