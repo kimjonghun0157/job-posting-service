@@ -52,7 +52,11 @@ public class JobPostingController {
      */
     @PostMapping("/api/job-postings/{id}/view")
     public ResponseEntity<Void> registerView(@PathVariable Long id, @RequestParam Long userId) {
-        boolean registered = viewRegistrationService.registerView(id, userId);
-        return registered ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+        try {
+            boolean registered = viewRegistrationService.registerView(id, userId);
+            return registered ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

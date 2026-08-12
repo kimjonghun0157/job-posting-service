@@ -145,14 +145,11 @@ class JobQueryServiceTest extends TestSupport {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * createdAt 정렬 기준으로 조회
-     */
     @Test
-    @DisplayName("생성일 기준 내림차순 정렬로 조회할 수 있다")
-    void getPostingsSortedByCreatedAt() {
+    @DisplayName("ASC 정렬로 오래된 공고부터 조회할 수 있다")
+    void getPostingsSortedByIdAsc() {
         // given
-        CursorRequest request = new CursorRequest(null, 10, "createdAt", "DESC");
+        CursorRequest request = new CursorRequest(null, 10, "id", "ASC");
 
         // when
         SliceResponse<JobPostingReadModel> response = jobQueryService.getJobPostings(request);
@@ -160,5 +157,7 @@ class JobQueryServiceTest extends TestSupport {
         // then
         assertThat(response.content()).hasSize(10);
         assertThat(response.hasNext()).isTrue();
+        assertThat(response.content().getFirst().id())
+                .isLessThan(response.content().getLast().id());
     }
 }

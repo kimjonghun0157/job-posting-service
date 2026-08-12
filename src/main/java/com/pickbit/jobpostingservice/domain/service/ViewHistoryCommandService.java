@@ -6,6 +6,7 @@ import com.pickbit.jobpostingservice.domain.port.ViewMessageQueue;
 import com.pickbit.jobpostingservice.domain.repository.JobRepository;
 import com.pickbit.jobpostingservice.domain.repository.ViewHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * 메시지 큐에서 조회 이력을 꺼내 DB에 일괄 반영
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ViewHistoryCommandService {
@@ -47,12 +49,17 @@ public class ViewHistoryCommandService {
         List<ViewMessage> batch = pollBatch();
 
         for (ViewMessage vm : batch) {
-            int updated = jobRepository.incrementViewCount(vm.jobPostingId(), ViewPolicy.MAX_VIEW_COUNT);
-            if (updated > 0) {
-                viewHistoryRepository.save(ViewHistory.create(
-                        jobRepository.getReferenceById(vm.jobPostingId()),
-                        vm.userId(),
-                        vm.seqNumber()));
+            try {
+                int updated = jobRepository.incrementViewCount(vm.jobPostingId(), ViewPolicy.MAX_VIEW_COUNT);
+                if (updated > 0) {
+                    viewHistoryRepository.save(ViewHistory.create(
+                            jobRepository.getReferenceById(vm.jobPostingId()),
+                            vm.userId(),
+                            vm.seqNumber()));
+                }
+            } catch (Exception e) {
+                log.warn("조회 이력 처리 실패 [postingId={}, userId={}, seq={}]: {}",
+                        vm.jobPostingId(), vm.userId(), vm.seqNumber(), e.getMessage());
             }
         }
     }

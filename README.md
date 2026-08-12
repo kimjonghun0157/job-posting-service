@@ -49,7 +49,7 @@ GET /api/job-postings?cursorId={lastId}&size={size}&sortBy={field}&direction={AS
 |---------|------|------|------|
 | cursorId | Long | N | 마지막으로 받은 공고 ID (없으면 최신부터) |
 | size | int | N | 조회 건수 (기본값 20) |
-| sortBy | String | N | 정렬 필드 — `id`, `createdAt` (기본값 `id`) |
+| sortBy | String | N | 정렬 필드 — `id` (기본값 `id`) |
 | direction | String | N | 정렬 방향 — `ASC`, `DESC` (기본값 `DESC`) |
 
 **응답**
@@ -126,7 +126,7 @@ offset 방식은 뒤쪽 페이지로 갈수록 느려지므로 커서(ID) 기반
 - `WHERE id < :cursorId ORDER BY id DESC LIMIT :size+1`
 - `size+1`건을 조회해서 초과분 존재 여부로 `hasNext` 판단 (COUNT 쿼리 불필요)
 - QueryDSL로 cursorId 유무에 따른 동적 쿼리 구성
-- `CursorSort`로 정렬 기준을 `id`, `createdAt`으로 제한하고 그 외 필드는 예외 처리
+- `CursorSort`로 정렬 기준을 `id`로 제한하고 그 외 필드는 예외 처리 — 커서 기반 페이지네이션에서 정렬 키와 커서 키가 일치해야 정확한 페이징이 보장됨
 
 ### 메인 페이지 — Redis Sorted Set 랭킹
 

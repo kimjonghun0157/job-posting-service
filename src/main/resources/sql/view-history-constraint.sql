@@ -8,3 +8,8 @@ CHECK (seq_number BETWEEN 1 AND 100);
 ALTER TABLE view_history
 ADD CONSTRAINT uq_view_history_posting_seq
 UNIQUE (job_posting_id, seq_number);
+
+-- job_posting.view_count 범위 제한: 0~100
+ALTER TABLE job_posting
+ADD CONSTRAINT chk_view_count
+CHECK (view_count BETWEEN 0 AND 100);

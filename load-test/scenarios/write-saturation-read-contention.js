@@ -73,10 +73,11 @@ export function handleSummary(data) {
     const readErrs = data.metrics.read_errors
         ? data.metrics.read_errors.values.count : 0;
 
-    const readP95 = data.metrics.read_duration
-        ? data.metrics.read_duration.values['p(95)'].toFixed(1) : 'N/A';
-    const readP99 = data.metrics.read_duration
-        ? data.metrics.read_duration.values['p(99)'].toFixed(1) : 'N/A';
+    const rd = data.metrics.read_duration;
+    const readP95 = rd && rd.values && rd.values['p(95)'] != null
+        ? rd.values['p(95)'].toFixed(1) : 'N/A';
+    const readP99 = rd && rd.values && rd.values['max'] != null
+        ? rd.values['max'].toFixed(1) : 'N/A';
 
     console.log('\n========== 쓰기 포화 + 읽기 경합 결과 ==========');
     console.log(`쓰기: 200 OK=${ok}, 204 Rejected=${rejected}`);

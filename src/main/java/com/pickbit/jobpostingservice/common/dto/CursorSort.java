@@ -8,6 +8,8 @@ import java.util.Objects;
  */
 public record CursorSort(String field, Direction direction) {
 
+    private static final String ALLOWED_FIELD = "id";
+
     public enum Direction {
         ASC, DESC;
 
@@ -21,6 +23,9 @@ public record CursorSort(String field, Direction direction) {
 
     public CursorSort {
         Objects.requireNonNull(field, "sort field must not be null");
+        if (!ALLOWED_FIELD.equals(field)) {
+            throw new IllegalArgumentException("지원하지 않는 정렬 필드: " + field + " (허용: id)");
+        }
         if (direction == null) direction = Direction.DESC;
     }
 }

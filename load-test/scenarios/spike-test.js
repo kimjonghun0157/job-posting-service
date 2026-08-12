@@ -61,12 +61,13 @@ export default function () {
 }
 
 export function handleSummary(data) {
-    const p50 = data.metrics.spike_duration
-        ? data.metrics.spike_duration.values['p(50)'].toFixed(1) : 'N/A';
-    const p95 = data.metrics.spike_duration
-        ? data.metrics.spike_duration.values['p(95)'].toFixed(1) : 'N/A';
-    const p99 = data.metrics.spike_duration
-        ? data.metrics.spike_duration.values['p(99)'].toFixed(1) : 'N/A';
+    const sd = data.metrics.spike_duration;
+    const p50 = sd && sd.values && sd.values['med'] != null
+        ? sd.values['med'].toFixed(1) : 'N/A';
+    const p95 = sd && sd.values && sd.values['p(95)'] != null
+        ? sd.values['p(95)'].toFixed(1) : 'N/A';
+    const p99 = sd && sd.values && sd.values['max'] != null
+        ? sd.values['max'].toFixed(1) : 'N/A';
     const errRate = data.metrics.http_req_failed
         ? (data.metrics.http_req_failed.values.rate * 100).toFixed(2) : 'N/A';
     const connRefused = data.metrics.connection_refused

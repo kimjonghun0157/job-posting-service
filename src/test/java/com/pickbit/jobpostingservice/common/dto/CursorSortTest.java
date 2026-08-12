@@ -59,21 +59,12 @@ class CursorSortTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    /**
-     * CursorRequest.toCursorSort()가 올바른 CursorSort를 생성
-     */
     @Test
-    @DisplayName("CursorRequest에서 정렬 기준을 추출할 수 있다")
-    void cursorRequestProducesCursorSort() {
-        // given
-        CursorRequest request = new CursorRequest(null, 10, "createdAt", "ASC");
-
-        // when
-        CursorSort sort = request.toCursorSort();
-
-        // then
-        assertThat(sort.field()).isEqualTo("createdAt");
-        assertThat(sort.direction()).isEqualTo(CursorSort.Direction.ASC);
+    @DisplayName("지원하지 않는 정렬 필드를 지정하면 예외가 발생한다")
+    void unsupportedSortFieldThrowsException() {
+        // given & when & then
+        assertThatThrownBy(() -> new CursorSort("createdAt", CursorSort.Direction.ASC))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     /**

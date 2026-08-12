@@ -21,11 +21,14 @@ public class RedisMainPageCache implements MainPageCache {
 
     @Override
     public void cacheIds(List<Long> ids) {
-        redisTemplate.delete(CACHE_KEY);
-        if (!ids.isEmpty()) {
-            String[] values = ids.stream().map(String::valueOf).toArray(String[]::new);
-            redisTemplate.opsForList().rightPushAll(CACHE_KEY, values);
+        if (ids.isEmpty()) {
+            redisTemplate.delete(CACHE_KEY);
+            return;
         }
+        String tempKey = CACHE_KEY + ":tmp";
+        String[] values = ids.stream().map(String::valueOf).toArray(String[]::new);
+        redisTemplate.opsForList().rightPushAll(tempKey, values);
+        redisTemplate.rename(tempKey, CACHE_KEY);
     }
 
     @Override
