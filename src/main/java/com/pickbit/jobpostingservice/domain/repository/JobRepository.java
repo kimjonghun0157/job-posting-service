@@ -21,7 +21,7 @@ public interface JobRepository extends JpaRepository<JobPosting, Long> {
      */
     @Modifying
     @Query("UPDATE JobPosting j SET j.viewCount = j.viewCount + 1 WHERE j.id = :id AND j.viewCount < :maxCount")
-    void incrementViewCount(@Param("id") Long id, @Param("maxCount") int maxCount);
+    int incrementViewCount(@Param("id") Long id, @Param("maxCount") int maxCount);
 
     /**
      * ID 목록으로 공고 일괄 조회

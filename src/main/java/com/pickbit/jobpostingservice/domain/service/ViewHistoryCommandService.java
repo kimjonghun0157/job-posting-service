@@ -47,11 +47,13 @@ public class ViewHistoryCommandService {
         List<ViewMessage> batch = pollBatch();
 
         for (ViewMessage vm : batch) {
-            jobRepository.incrementViewCount(vm.jobPostingId(), ViewPolicy.MAX_VIEW_COUNT);
-            viewHistoryRepository.save(ViewHistory.create(
-                    jobRepository.getReferenceById(vm.jobPostingId()),
-                    vm.userId(),
-                    vm.seqNumber()));
+            int updated = jobRepository.incrementViewCount(vm.jobPostingId(), ViewPolicy.MAX_VIEW_COUNT);
+            if (updated > 0) {
+                viewHistoryRepository.save(ViewHistory.create(
+                        jobRepository.getReferenceById(vm.jobPostingId()),
+                        vm.userId(),
+                        vm.seqNumber()));
+            }
         }
     }
 

@@ -1,0 +1,16 @@
+server:
+  tomcat:
+    threads:
+      max: 500
+    accept-count: 200
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false

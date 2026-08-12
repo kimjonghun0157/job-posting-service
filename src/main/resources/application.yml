@@ -29,7 +29,7 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: classpath:sql/view-history-constraint.sql
+      schema-locations: classpath:sql/view-history-constraint.sql
 
 scheduler:
   job-posting:
