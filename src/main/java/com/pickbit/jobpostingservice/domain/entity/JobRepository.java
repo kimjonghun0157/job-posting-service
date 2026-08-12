@@ -1,4 +1,8 @@
 package com.pickbit.jobpostingservice.domain.entity;
 
-public interface JobRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface JobRepository extends JpaRepository<JobPosting,Long> {
 }
