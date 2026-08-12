@@ -1,3 +1,20 @@
 spring:
   application:
     name: job-posting-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/pickbit_job_db?rewriteBatchedStatements=true
+    username: pickbit_user
+    password: pickbit_pass_2024
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 100
+        order_inserts: true

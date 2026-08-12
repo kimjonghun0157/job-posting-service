@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.4.5
+    container_name: pickbit-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: pickbit_root_pass
+      MYSQL_DATABASE: pickbit_job_db
+      MYSQL_USER: pickbit_user
+      MYSQL_PASSWORD: pickbit_pass_2024
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
