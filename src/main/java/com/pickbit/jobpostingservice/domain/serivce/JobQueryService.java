@@ -1,10 +1,10 @@
 package com.pickbit.jobpostingservice.domain.serivce;
 
-import com.pickbit.jobpostingservice.api.dto.JobPostingSliceResponse;
-import com.pickbit.jobpostingservice.api.mapper.JobPostingMapper;
+import com.pickbit.jobpostingservice.api.dto.CursorRequest;
+import com.pickbit.jobpostingservice.api.dto.JobPostingListResponse;
+import com.pickbit.jobpostingservice.api.dto.SliceResponse;
 import com.pickbit.jobpostingservice.domain.repository.JobPostingQueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class JobQueryService {
 
     private final JobPostingQueryRepository jobPostingQueryRepository;
-    private final JobPostingMapper jobPostingMapper;
 
-    public JobPostingSliceResponse getJobPostings(Long cursorId, Pageable pageable) {
-        return jobPostingMapper.toSliceResponse(
-                jobPostingQueryRepository.findByCursor(cursorId, pageable));
+    public SliceResponse<JobPostingListResponse> getJobPostings(CursorRequest request) {
+        return SliceResponse.of(
+                jobPostingQueryRepository.findByCursor(request),
+                request.size(),
+                JobPostingListResponse::id
+        );
     }
 }
