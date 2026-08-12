@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +23,7 @@ class JobPostingSchedulerSchedulingTest extends TestSupport {
 
     @Test
     @DisplayName("3초 간격으로 스케줄링이 동작하여 10초 후 150건의 공고가 등록된다")
+    @Transactional
     void scheduledAutoRegisterCreates150PostingsIn10Seconds() {
         // given
         long beforeCount = jobRepository.count();
