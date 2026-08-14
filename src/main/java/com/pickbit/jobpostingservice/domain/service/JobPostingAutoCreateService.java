@@ -3,6 +3,7 @@ package com.pickbit.jobpostingservice.domain.service;
 import com.pickbit.jobpostingservice.domain.entity.JobPosting;
 import com.pickbit.jobpostingservice.domain.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,7 @@ public class JobPostingAutoCreateService {
     };
 
     private final JobRepository jobRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * job_posting 테이블에 50건 batch insert

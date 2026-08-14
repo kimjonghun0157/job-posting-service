@@ -50,7 +50,9 @@ public class ViewHistoryCommandService {
 
         for (ViewMessage vm : batch) {
             try {
+
                 int updated = jobRepository.incrementViewCount(vm.jobPostingId(), ViewPolicy.MAX_VIEW_COUNT);
+
                 if (updated > 0) {
                     viewHistoryRepository.save(ViewHistory.create(
                             jobRepository.getReferenceById(vm.jobPostingId()),

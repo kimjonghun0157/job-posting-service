@@ -2,21 +2,21 @@ spring:
   application:
     name: job-posting-service
 
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/pickbit_job_db
-    username: pickbit_user
-    password: pickbit_pass_2024
-    driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5433/pickbit_job_db
+      username: pickbit_user
+      password: pickbit_pass_2024
 
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 6380
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     defer-datasource-initialization: true
     properties:
@@ -30,6 +30,8 @@ spring:
     init:
       mode: always
       schema-locations: classpath:sql/view-history-constraint.sql
+      # DO 블록 내부 세미콜론과 구분하기 위한 문장 구분자 (스크립트 각 문장은 ";;" 로 종료)
+      separator: ";;"
 
 scheduler:
   job-posting:

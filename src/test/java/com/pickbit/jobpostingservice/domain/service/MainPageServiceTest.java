@@ -161,6 +161,26 @@ class MainPageServiceTest extends TestSupport {
     }
 
     /**
+     * 제목은 갱신 시점에 캐시에 담기므로 조회 시 DB를 읽지 않는다
+     */
+    @Test
+    @DisplayName("메인 페이지 제목은 DB 재조회 없이 캐시에서 반환된다")
+    void mainPageTitleComesFromCacheWithoutDbAccess() {
+        // given — 갱신으로 제목까지 캐시에 적재
+        mainPageService.refreshMainPage();
+        String expectedTitle = savedPostings.getFirst().getTitle();
+
+        // when — DB를 비운 뒤 조회
+        jobRepository.deleteAllInBatch();
+        List<MainPagePostingReadModel> result = mainPageService.getMainPagePostings();
+
+        // then — DB가 비었어도 캐시의 제목이 그대로 나온다
+        assertThat(result).hasSize(5);
+        assertThat(result).extracting(MainPagePostingReadModel::title).contains(expectedTitle);
+        assertThat(result).noneMatch(r -> r.title() == null || r.title().isBlank());
+    }
+
+    /**
      * refreshMainPage 후 랭킹이 초기화되는지 확인
      */
     @Test

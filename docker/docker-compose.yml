@@ -3,7 +3,7 @@ services:
     image: postgres:17
     container_name: pickbit-postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_DB: pickbit_job_db
       POSTGRES_USER: pickbit_user
@@ -15,7 +15,7 @@ services:
     image: redis:7
     container_name: pickbit-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
 volumes:
   postgres-data:
